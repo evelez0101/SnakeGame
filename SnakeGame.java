@@ -5,5 +5,4 @@ public class SnakeGame
         // Creates an instance of our Game Frame
         GameFrame game = new GameFrame();
     }
-
 }
