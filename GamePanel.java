@@ -5,6 +5,9 @@ import java.util.Random;
 
 public class GamePanel extends JPanel implements ActionListener 
 {
+    // Save System
+    private SaveSystem s;
+
     // Screen Size
     static final int SCREEN_WIDTH = 600;
     static final int SCREEN_HEIGHT = 600;
@@ -27,11 +30,15 @@ public class GamePanel extends JPanel implements ActionListener
     int appleY; // X coordinate of Apple
     char direction = 'r'; // Staring Direction of snake
     boolean isRunning = false;
+    boolean inMenu = true;
     Timer time; // Game Timer (Flow of the Game)
     Random rand;
 
+    JButton topButton;
+
     public GamePanel() 
     {
+        s = new SaveSystem();
         rand = new Random();
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT)); // Dimesions of Game Window
         this.setBackground(Color.decode("#0A0908")); // Background Color of game
@@ -97,7 +104,6 @@ public class GamePanel extends JPanel implements ActionListener
             
             // Display Score
             displayScore(g);
-            
         }
         else
         {
@@ -110,10 +116,19 @@ public class GamePanel extends JPanel implements ActionListener
     public void displayScore(Graphics g)
     {
         // Game Score 
-        g.setColor(Color.decode("#E9ECEF"));; // Color of Test
+        g.setColor(Color.decode("#E9ECEF"));; // Color of Text
         g.setFont(new Font(Font.SERIF,Font.BOLD,40)); // Font of text
         FontMetrics metrics = getFontMetrics(g.getFont());
-        g.drawString( ("Score: " + applesEaten) , ( ( SCREEN_WIDTH - metrics.stringWidth( ("Score: " + applesEaten) ) ) / 2), g.getFont().getSize()); // Center of the Screen
+
+        // Displays Score
+        if (applesEaten >= s.HighestScore())
+        {
+            g.drawString( ("New High Score: " + applesEaten) , ( ( SCREEN_WIDTH - metrics.stringWidth( ("New High Score: " + applesEaten) ) ) / 2), g.getFont().getSize()); // Center of the Screen
+        }
+        else
+        {
+            g.drawString( ("Score: " + applesEaten) , ( ( SCREEN_WIDTH - metrics.stringWidth( ("Score: " + applesEaten) ) ) / 2), g.getFont().getSize()); // Center of the Screen
+        }    
     }
 
     public void applePlacer() 
@@ -199,7 +214,8 @@ public class GamePanel extends JPanel implements ActionListener
         FontMetrics metrics = getFontMetrics(g.getFont());
         g.drawString("Game Over", ((SCREEN_WIDTH - metrics.stringWidth("Game Over")) / 2 ), SCREEN_HEIGHT / 2); // Center of the Screen
 
-        // Display Score at GameOver Screen
+        // Save and Display Score at GameOver Screen
+        s.save(applesEaten);
         displayScore(g);
     }
 
